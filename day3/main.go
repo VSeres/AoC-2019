@@ -137,7 +137,7 @@ func print(pointMap map[point]info) {
 	for y := yMax; y >= yMin; y-- {
 		for x := xMin; x <= xMax; x++ {
 			pointInfo := pointMap[point{x, y}]
-			if pointInfo.visited == 1 {
+			if pointInfo.visited == 1 || pointInfo.visited == 2 {
 				fmt.Print("-")
 			} else if pointInfo.visited > 1 {
 				fmt.Print("X")
