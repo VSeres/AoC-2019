@@ -91,7 +91,7 @@ func setVisited(visitedPoints map[point]*info, p point, steps uint, wireNum int)
 		}
 	} else {
 		vP.steps += steps
-		vP.visited |= uint8(wireNum + 1)
+		vP.visited += uint8(wireNum + 1)
 	}
 }
 
