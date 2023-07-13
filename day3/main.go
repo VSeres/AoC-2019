@@ -25,7 +25,7 @@ type info struct {
 }
 
 func solve(wires [][]string) {
-	pointMap := make(map[point]*info, 900)
+	pointMap := make(map[point]info, 900)
 	for wireNum, wire := range wires {
 		x, y := 0, 0
 		var steps uint = 0
@@ -77,22 +77,21 @@ func solve(wires [][]string) {
 			minStep = &pCopy
 		}
 	}
-	fmt.Println("part one: ", distance(*minDist))
-	fmt.Println("part two: ", pointMap[*minStep].steps)
+	// fmt.Println("part one: ", distance(*minDist))
+	// fmt.Println("part two: ", pointMap[*minStep].steps)
 	// print(pointMap)
 }
 
-func setVisited(visitedPoints map[point]*info, p point, steps uint, wireNum int) {
+func setVisited(visitedPoints map[point]info, p point, steps uint, wireNum int) {
 	vP := visitedPoints[p]
-	if vP == nil {
-		visitedPoints[p] = &info{
-			visited: uint8(wireNum + 1),
-			steps:   steps,
-		}
+	if vP.steps == 0 {
+		vP.steps = steps
+		vP.visited = uint8(wireNum + 1)
 	} else {
 		vP.steps += steps
 		vP.visited |= uint8(wireNum + 1)
 	}
+	visitedPoints[p] = vP
 }
 
 func parseFile(path string) [][]string {
