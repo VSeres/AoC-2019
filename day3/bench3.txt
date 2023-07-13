@@ -1,0 +1,8 @@
+goos: linux
+goarch: amd64
+pkg: aoc-2019/day3
+cpu: Intel(R) Core(TM) i3-8100 CPU @ 3.60GHz
+BenchmarkSolve-4      	   65776	     93258 ns/op
+BenchmarkSolveOld-4   	   20588	    286746 ns/op
+PASS
+ok  	aoc-2019/day3	15.914s

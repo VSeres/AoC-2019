@@ -25,9 +25,8 @@ type info struct {
 }
 
 func solve(wires [][]string) {
-	pointMap := make(map[point]info)
-	for _, wire := range wires {
-		visited := make(map[point]*info)
+	pointMap := make(map[point]*info, 900)
+	for wireNum, wire := range wires {
 		x, y := 0, 0
 		var steps uint = 0
 		for _, inst := range wire {
@@ -35,44 +34,39 @@ func solve(wires [][]string) {
 			if err != nil {
 				log.Print(err)
 			}
-			if inst[0] == 'U' {
+			switch inst[0] {
+			case 'U':
 				for i := y + 1; i <= y+num; i++ {
 					steps += 1
-					setVisited(visited, point{x, i}, steps)
+					setVisited(pointMap, point{x, i}, steps, wireNum)
 				}
 				y += num
-			} else if inst[0] == 'D' {
+			case 'D':
 				for i := y - 1; i >= y-num; i-- {
 					steps += 1
-					setVisited(visited, point{x, i}, steps)
+					setVisited(pointMap, point{x, i}, steps, wireNum)
 				}
 				y -= num
-			} else if inst[0] == 'L' {
+			case 'L':
 				for i := x - 1; i >= x-num; i-- {
 					steps += 1
-					setVisited(visited, point{i, y}, steps)
+					setVisited(pointMap, point{i, y}, steps, wireNum)
 				}
 				x -= num
-			} else if inst[0] == 'R' {
+			case 'R':
 				for i := x + 1; i <= x+num; i++ {
 					steps += 1
-					setVisited(visited, point{i, y}, steps)
+					setVisited(pointMap, point{i, y}, steps, wireNum)
 				}
 				x += num
 			}
 		}
-
-		for p, vInfo := range visited {
-			pInfo := pointMap[p]
-			pInfo.steps += vInfo.steps
-			pInfo.visited += 1
-			pointMap[p] = pInfo
-		}
 	}
+
 	var minDist *point
 	var minStep *point
 	for p, pInfo := range pointMap {
-		if pInfo.visited < 2 {
+		if pInfo.visited != 3 {
 			continue
 		}
 		pCopy := p
@@ -83,17 +77,21 @@ func solve(wires [][]string) {
 			minStep = &pCopy
 		}
 	}
-	log.Print("part one: ", distance(*minDist))
-	log.Print("part two: ", pointMap[*minStep].steps)
+	fmt.Println("part one: ", distance(*minDist))
+	fmt.Println("part two: ", pointMap[*minStep].steps)
 	// print(pointMap)
 }
 
-func setVisited(visited map[point]*info, p point, steps uint) {
-	if visited[p] == nil {
-		visited[p] = &info{
-			visited: 1,
+func setVisited(visitedPoints map[point]*info, p point, steps uint, wireNum int) {
+	vP := visitedPoints[p]
+	if vP == nil {
+		visitedPoints[p] = &info{
+			visited: uint8(wireNum + 1),
 			steps:   steps,
 		}
+	} else {
+		vP.steps += steps
+		vP.visited |= uint8(wireNum + 1)
 	}
 }
 
@@ -152,5 +150,4 @@ func print(pointMap map[point]info) {
 		}
 		fmt.Println()
 	}
-
 }
