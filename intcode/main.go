@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-func (p *Program) Execute() {
+func (p *Program) Execute() error {
 	for p.pc < len(p.memory) {
 		inst := p.memory[p.pc]
 		p.pc++
@@ -24,19 +24,23 @@ func (p *Program) Execute() {
 		for i := len(modesStr) - 1; i >= 0; i-- {
 			p.modes[i] = modesStr[i] == '1'
 		}
-
+		var err error
 		switch opCode {
 		case 1:
-			p.add()
+			err = p.add()
 		case 2:
-			p.multiply()
+			err = p.multiply()
 		case 3:
-			p.input(1)
+			err = p.input(1)
 		case 4:
-			p.output()
+			err = p.output()
+		}
+		if err != nil {
+			return err
 		}
 	}
 	// fmt.Println(p.memory)
+	return nil
 }
 
 func ParseFile(path string) Program {
@@ -70,4 +74,26 @@ func ParseFile(path string) Program {
 	fmt.Println()
 
 	return Program{memory: code}
+}
+
+func (p *Program) Clone() Program {
+	program := Program{
+		memory: make([]int, len(p.memory)),
+	}
+	copy(program.memory, p.memory)
+	return program
+}
+
+func (p Program) ReadMemory(address int) int {
+	if address >= len(p.memory) {
+		return -1
+	}
+	return p.memory[address]
+}
+
+func (p Program) WriteMemory(address int, value int) {
+	if address >= len(p.memory) {
+		return
+	}
+	p.memory[address] = value
 }

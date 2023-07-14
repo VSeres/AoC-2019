@@ -1,6 +1,9 @@
 package intcode
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+)
 
 type Program struct {
 	memory []int
@@ -8,7 +11,11 @@ type Program struct {
 	modes  [3]bool
 }
 
-func (p *Program) add() {
+var (
+	errInvalidAddress error = errors.New("invalid address")
+)
+
+func (p *Program) add() error {
 	opOne := p.memory[p.pc]
 	opTwo := p.memory[p.pc+1]
 	dest := p.memory[p.pc+2]
@@ -17,21 +24,31 @@ func (p *Program) add() {
 	var regA int
 	if p.modes[2] {
 		regA = opOne
-	} else {
+	} else if len(p.memory) > opOne {
 		regA = p.memory[opOne]
+	} else {
+		return errInvalidAddress
 	}
 
 	var regB int
 	if p.modes[1] {
 		regB = opTwo
-	} else {
+	} else if len(p.memory) > opTwo {
 		regB = p.memory[opTwo]
+	} else {
+		return errInvalidAddress
 	}
-	// fmt.Println("add ", p.memory[p.pc-4], regA, regB)
-	p.memory[dest] = regA + regB
+
+	if len(p.memory) > dest {
+		p.memory[dest] = regA + regB
+		return nil
+	}
+
+	return errInvalidAddress
+
 }
 
-func (p *Program) multiply() {
+func (p *Program) multiply() error {
 	opOne := p.memory[p.pc]
 	opTwo := p.memory[p.pc+1]
 	dest := p.memory[p.pc+2]
@@ -40,30 +57,45 @@ func (p *Program) multiply() {
 	var regA int
 	if p.modes[2] {
 		regA = opOne
-	} else {
+	} else if len(p.memory) > opOne {
 		regA = p.memory[opOne]
+	} else {
+		return errInvalidAddress
 	}
 
 	var regB int
 	if p.modes[1] {
 		regB = opTwo
-	} else {
+	} else if len(p.memory) > opTwo {
 		regB = p.memory[opTwo]
+	} else {
+		return errInvalidAddress
 	}
 
-	p.memory[dest] = regA * regB
+	if len(p.memory) > dest {
+		p.memory[dest] = regA * regB
+		return nil
+	}
+
+	return errInvalidAddress
 }
 
-func (p *Program) input(input int) {
+func (p *Program) input(input int) error {
 	dest := p.memory[p.pc]
 	p.pc++
-
+	if len(p.memory) > dest {
+		return errInvalidAddress
+	}
 	p.memory[dest] = input
+	return nil
 }
 
-func (p *Program) output() {
+func (p *Program) output() error {
 	dest := p.memory[p.pc]
 	p.pc++
-
+	if len(p.memory) > dest {
+		return errInvalidAddress
+	}
 	fmt.Println("output: ", p.memory[dest])
+	return nil
 }

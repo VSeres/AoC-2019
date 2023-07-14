@@ -12,20 +12,22 @@ func main() {
 
 }
 
-func partOne(baseCode []int) {
-	code := make([]int, len(baseCode))
-	copy(code, baseCode)
-	log.Print(intcode.Execute(code))
+func partOne(baseProgram intcode.Program) {
+	program := baseProgram.Clone()
+	program.WriteMemory(1, 12)
+	program.WriteMemory(2, 2)
+	program.Execute()
+	log.Print(program.ReadMemory(0))
 }
 
-func partTwo(baseCode []int) {
+func partTwo(baseProgram intcode.Program) {
 	for i := 0; i < 1000; i++ {
 		for j := 0; j < 1000; j++ {
-			code := make([]int, len(baseCode))
-			copy(code, baseCode)
-			(code)[1] = i
-			(code)[2] = j
-			result := intcode.Execute(code)
+			program := baseProgram.Clone()
+			program.WriteMemory(1, i)
+			program.WriteMemory(2, j)
+			program.Execute()
+			result := program.ReadMemory(0)
 			if result == 19690720 {
 				log.Print(result, i, j)
 				return
