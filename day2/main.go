@@ -16,17 +16,17 @@ func partOne(baseProgram intcode.Program) {
 	program := baseProgram.Clone()
 	program.WriteMemory(1, 12)
 	program.WriteMemory(2, 2)
-	program.Execute()
+	program.Execute(-1)
 	log.Print(program.ReadMemory(0))
 }
 
 func partTwo(baseProgram intcode.Program) {
-	for i := 0; i < 1000; i++ {
-		for j := 0; j < 1000; j++ {
+	for i := 0; i < 99; i++ {
+		for j := 0; j < 99; j++ {
 			program := baseProgram.Clone()
 			program.WriteMemory(1, i)
 			program.WriteMemory(2, j)
-			program.Execute()
+			program.Execute(-1)
 			result := program.ReadMemory(0)
 			if result == 19690720 {
 				log.Print(result, i, j)

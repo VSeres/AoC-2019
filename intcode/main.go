@@ -9,12 +9,12 @@ import (
 	"strings"
 )
 
-func (p *Program) Execute() error {
+func (p *Program) Execute(input int) error {
 	for p.pc < len(p.memory) {
 		inst := p.memory[p.pc]
 		p.pc++
-		opCode := inst % 100
-		if opCode == 99 {
+		opcode := inst % 100
+		if opcode == 99 {
 			break
 		}
 		modesStr := fmt.Sprintf("%05d", inst)
@@ -24,19 +24,25 @@ func (p *Program) Execute() error {
 		for i := len(modesStr) - 1; i >= 0; i-- {
 			p.modes[i] = modesStr[i] == '1'
 		}
-		var err error
-		switch opCode {
+		switch opcode {
 		case 1:
-			err = p.add()
+			p.add()
 		case 2:
-			err = p.multiply()
+			p.multiply()
 		case 3:
-			err = p.input(1)
+			p.input(input)
 		case 4:
-			err = p.output()
-		}
-		if err != nil {
-			return err
+			p.output()
+		case 5:
+			p.jumpIf(true)
+		case 6:
+			p.jumpIf(false)
+		case 7:
+			p.lessThan()
+		case 8:
+			p.equals()
+		default:
+			log.Printf("invaild opcode: %d", opcode)
 		}
 	}
 	// fmt.Println(p.memory)
@@ -48,14 +54,20 @@ func ParseFile(path string) Program {
 	if err != nil {
 		log.Fatal(err)
 	}
+	var builder strings.Builder
+
 	buff := make([]byte, 2048)
-	n, err := file.Read(buff)
-	if err != nil && err != io.EOF {
-		log.Fatal(err)
+	var n int
+	for err != io.EOF {
+		n, err = file.Read(buff)
+
+		if err != nil && err != io.EOF {
+			log.Fatal(err)
+		}
+		builder.Write(buff[:n])
 	}
 
-	buff = buff[:n]
-	str := strings.Trim(string(buff), "\n\r")
+	str := strings.Trim(builder.String(), "\n\r")
 	strArr := strings.Split(str, ",")
 	code := make([]int, len(strArr))
 

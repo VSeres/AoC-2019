@@ -1,8 +1,10 @@
 package main
 
-import "aoc-2019/intcode"
+import (
+	"aoc-2019/intcode"
+)
 
 func main() {
 	prog := intcode.ParseFile("./input.txt")
-	prog.Execute()
+	prog.Execute(5)
 }
