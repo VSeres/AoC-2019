@@ -9,30 +9,24 @@ import (
 	"strings"
 )
 
-func (p *Program) Execute(input int) error {
+func (p *Program) Execute(inputs []int) (output int) {
+	p.inputArr = inputs
+	p.inputPointer = 0
 	for p.pc < len(p.memory) {
-		inst := p.memory[p.pc]
-		p.pc++
-		opcode := inst % 100
-		if opcode == 99 {
-			break
-		}
-		modesStr := fmt.Sprintf("%05d", inst)
-
-		modesStr = modesStr[:len(modesStr)-2]
-		p.modes = [3]bool{}
-		for i := len(modesStr) - 1; i >= 0; i-- {
-			p.modes[i] = modesStr[i] == '1'
-		}
+		opcode := p.readInsctrucion()
 		switch opcode {
 		case 1:
 			p.add()
 		case 2:
 			p.multiply()
 		case 3:
-			p.input(input)
+			if p.inputPointer >= len(p.inputArr) {
+				p.halt = true
+				return
+			}
+			p.input()
 		case 4:
-			p.output()
+			output = p.output()
 		case 5:
 			p.jumpIf(true)
 		case 6:
@@ -41,12 +35,35 @@ func (p *Program) Execute(input int) error {
 			p.lessThan()
 		case 8:
 			p.equals()
+		case 99:
+			p.Stopped = true
+			return
 		default:
 			log.Printf("invaild opcode: %d", opcode)
 		}
 	}
-	// fmt.Println(p.memory)
-	return nil
+	return
+}
+
+func (p *Program) readInsctrucion() int {
+	if p.halt {
+		p.pc -= 1
+		p.halt = false
+	}
+	inst := p.memory[p.pc]
+	p.pc++
+	opcode := inst % 100
+	if opcode == 99 {
+		return 99
+	}
+	modesStr := fmt.Sprintf("%05d", inst)
+
+	modesStr = modesStr[:len(modesStr)-2]
+	p.modes = [3]bool{}
+	for i := len(modesStr) - 1; i >= 0; i-- {
+		p.modes[i] = modesStr[i] == '1'
+	}
+	return opcode
 }
 
 func ParseFile(path string) Program {

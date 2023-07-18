@@ -16,7 +16,7 @@ func partOne(baseProgram intcode.Program) {
 	program := baseProgram.Clone()
 	program.WriteMemory(1, 12)
 	program.WriteMemory(2, 2)
-	program.Execute(-1)
+	program.Execute([]int{})
 	log.Print(program.ReadMemory(0))
 }
 
@@ -26,7 +26,7 @@ func partTwo(baseProgram intcode.Program) {
 			program := baseProgram.Clone()
 			program.WriteMemory(1, i)
 			program.WriteMemory(2, j)
-			program.Execute(-1)
+			program.Execute([]int{})
 			result := program.ReadMemory(0)
 			if result == 19690720 {
 				log.Print(result, i, j)

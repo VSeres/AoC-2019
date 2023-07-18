@@ -1,13 +1,13 @@
 package intcode
 
-import (
-	"fmt"
-)
-
 type Program struct {
-	memory []int
-	pc     int
-	modes  [3]bool
+	memory       []int
+	pc           int
+	modes        [3]bool
+	inputArr     []int
+	inputPointer int
+	halt         bool
+	Stopped      bool
 }
 
 func (p *Program) add() {
@@ -59,19 +59,22 @@ func (p *Program) multiply() {
 	}
 }
 
-func (p *Program) input(input int) {
+func (p *Program) input() {
+	input := p.inputArr[p.inputPointer]
+	p.inputPointer += 1
+
 	dest := p.memory[p.pc]
 	p.pc++
 	p.memory[dest] = input
 }
 
-func (p *Program) output() {
+func (p *Program) output() int {
 	opOne := p.memory[p.pc]
 	p.pc++
 	if p.modes[2] {
-		fmt.Println("output: ", opOne)
+		return opOne
 	} else {
-		fmt.Println("output: ", p.memory[opOne])
+		return p.memory[opOne]
 	}
 }
 
