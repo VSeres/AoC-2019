@@ -3,11 +3,12 @@ package intcode
 type Program struct {
 	memory       []int
 	pc           int
-	modes        [3]bool
+	modes        [3]byte
 	inputArr     []int
 	inputPointer int
 	halt         bool
 	Stopped      bool
+	base         int
 }
 
 func (p *Program) add() {
@@ -16,22 +17,11 @@ func (p *Program) add() {
 	dest := p.memory[p.pc+2]
 	p.pc += 3
 
-	var regA int
-	if p.modes[2] {
-		regA = opOne
-	} else if len(p.memory) > opOne {
-		regA = p.memory[opOne]
-	}
+	regA := p.getValue(p.modes[2], opOne)
+	regB := p.getValue(p.modes[1], opTwo)
 
-	var regB int
-	if p.modes[1] {
-		regB = opTwo
-	} else if len(p.memory) > opTwo {
-		regB = p.memory[opTwo]
-	}
-	if len(p.memory) > dest {
-		p.memory[dest] = regA + regB
-	}
+	p.putValue(dest, regA+regB, p.modes[0])
+
 }
 
 func (p *Program) multiply() {
@@ -40,23 +30,11 @@ func (p *Program) multiply() {
 	dest := p.memory[p.pc+2]
 	p.pc += 3
 
-	var regA int
-	if p.modes[2] {
-		regA = opOne
-	} else if len(p.memory) > opOne {
-		regA = p.memory[opOne]
-	}
+	regA := p.getValue(p.modes[2], opOne)
+	regB := p.getValue(p.modes[1], opTwo)
 
-	var regB int
-	if p.modes[1] {
-		regB = opTwo
-	} else if len(p.memory) > opTwo {
-		regB = p.memory[opTwo]
-	}
+	p.putValue(dest, regA*regB, p.modes[0])
 
-	if len(p.memory) > dest {
-		p.memory[dest] = regA * regB
-	}
 }
 
 func (p *Program) input() {
@@ -65,36 +43,23 @@ func (p *Program) input() {
 
 	dest := p.memory[p.pc]
 	p.pc++
-	p.memory[dest] = input
+	p.putValue(dest, input, p.modes[2])
 }
 
 func (p *Program) output() int {
 	opOne := p.memory[p.pc]
 	p.pc++
-	if p.modes[2] {
-		return opOne
-	} else {
-		return p.memory[opOne]
-	}
+	return p.getValue(p.modes[2], opOne)
+
 }
 
 func (p *Program) jumpIf(nonZero bool) {
 	opOne := p.memory[p.pc]
 	opTwo := p.memory[p.pc+1]
 	p.pc += 2
-	var regA int
-	if p.modes[2] {
-		regA = opOne
-	} else {
-		regA = p.memory[opOne]
-	}
 
-	var regB int
-	if p.modes[1] {
-		regB = opTwo
-	} else {
-		regB = p.memory[opTwo]
-	}
+	regA := p.getValue(p.modes[2], opOne)
+	regB := p.getValue(p.modes[1], opTwo)
 
 	if (regA != 0) == nonZero {
 		p.pc = regB
@@ -107,24 +72,13 @@ func (p *Program) lessThan() {
 	dest := p.memory[p.pc+2]
 	p.pc += 3
 
-	var regA int
-	if p.modes[2] {
-		regA = opOne
-	} else {
-		regA = p.memory[opOne]
-	}
-
-	var regB int
-	if p.modes[1] {
-		regB = opTwo
-	} else {
-		regB = p.memory[opTwo]
-	}
+	regA := p.getValue(p.modes[2], opOne)
+	regB := p.getValue(p.modes[1], opTwo)
 
 	if regA < regB {
-		p.memory[dest] = 1
+		p.putValue(dest, 1, p.modes[0])
 	} else {
-		p.memory[dest] = 0
+		p.putValue(dest, 0, p.modes[0])
 	}
 }
 
@@ -134,23 +88,18 @@ func (p *Program) equals() {
 	dest := p.memory[p.pc+2]
 	p.pc += 3
 
-	var regA int
-	if p.modes[2] {
-		regA = opOne
-	} else {
-		regA = p.memory[opOne]
-	}
-
-	var regB int
-	if p.modes[1] {
-		regB = opTwo
-	} else {
-		regB = p.memory[opTwo]
-	}
+	regA := p.getValue(p.modes[2], opOne)
+	regB := p.getValue(p.modes[1], opTwo)
 
 	if regA == regB {
-		p.memory[dest] = 1
+		p.putValue(dest, 1, p.modes[0])
 	} else {
-		p.memory[dest] = 0
+		p.putValue(dest, 0, p.modes[0])
 	}
+}
+
+func (p *Program) modBase() {
+	param := p.memory[p.pc]
+	p.pc++
+	p.base += p.getValue(p.modes[2], param)
 }

@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-func (p *Program) Execute(inputs []int) (output int) {
+func (p *Program) Execute(inputs []int) (output []int) {
 	p.inputArr = inputs
 	p.inputPointer = 0
 	for p.pc < len(p.memory) {
@@ -26,7 +26,7 @@ func (p *Program) Execute(inputs []int) (output int) {
 			}
 			p.input()
 		case 4:
-			output = p.output()
+			output = append(output, p.output())
 		case 5:
 			p.jumpIf(true)
 		case 6:
@@ -35,6 +35,8 @@ func (p *Program) Execute(inputs []int) (output int) {
 			p.lessThan()
 		case 8:
 			p.equals()
+		case 9:
+			p.modBase()
 		case 99:
 			p.Stopped = true
 			return
@@ -57,11 +59,9 @@ func (p *Program) readInsctrucion() int {
 		return 99
 	}
 	modesStr := fmt.Sprintf("%05d", inst)
-
 	modesStr = modesStr[:len(modesStr)-2]
-	p.modes = [3]bool{}
 	for i := len(modesStr) - 1; i >= 0; i-- {
-		p.modes[i] = modesStr[i] == '1'
+		p.modes[i] = modesStr[i]
 	}
 	return opcode
 }
@@ -87,7 +87,6 @@ func ParseFile(path string) Program {
 	str := strings.Trim(builder.String(), "\n\r")
 	strArr := strings.Split(str, ",")
 	code := make([]int, len(strArr))
-
 	for i := range code {
 		fmt.Printf("\r\033[K%d/%d", i+1, len(strArr))
 		if strings.Trim(strArr[i], " \n\r") == "" {
