@@ -43,7 +43,8 @@ func main() {
 		} else {
 			input = 0
 		}
-		output := code.Execute([]int{input})
+		code.SetInput(input)
+		output := code.Execute()
 		for i := 0; i <= len(output)-3; i += 3 {
 			currentTile := tile{
 				tileType: tileId(output[i+2]),

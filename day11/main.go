@@ -76,7 +76,8 @@ func partTwo(code intcode.Program) {
 func paint(code intcode.Program, panelMap map[point]int) {
 	for !code.Stopped {
 		color := panelMap[paintingRobot.point]
-		output := code.Execute([]int{int(color)})
+		code.SetInput(color)
+		output := code.Execute()
 
 		panelMap[paintingRobot.point] = output[0]
 		y := 0

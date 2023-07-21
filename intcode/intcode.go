@@ -9,9 +9,7 @@ import (
 	"strings"
 )
 
-func (p *Program) Execute(inputs []int) (output []int) {
-	p.inputArr = inputs
-	p.inputPointer = 0
+func (p *Program) Execute() (output []int) {
 	for p.pc < len(p.memory) {
 		opcode := p.readInsctrucion()
 		switch opcode {
@@ -45,6 +43,19 @@ func (p *Program) Execute(inputs []int) (output []int) {
 		}
 	}
 	return
+}
+
+func (p *Program) SetInput(i int) {
+	if len(p.inputArr) > 1 || len(p.inputArr) == 0 {
+		p.inputArr = make([]int, 1)
+	}
+	p.inputPointer = 0
+	p.inputArr[0] = i
+}
+
+func (p *Program) SetInputs(inputs []int) {
+	p.inputArr = inputs
+	p.inputPointer = 0
 }
 
 func (p *Program) readInsctrucion() int {

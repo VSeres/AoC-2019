@@ -6,5 +6,6 @@ import (
 
 func main() {
 	prog := intcode.ParseFile("./input.txt")
-	prog.Execute([]int{5})
+	prog.SetInput(5)
+	prog.Execute()
 }

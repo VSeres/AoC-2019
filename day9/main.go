@@ -7,5 +7,6 @@ import (
 
 func main() {
 	program := intcode.ParseFile("input.txt")
-	fmt.Println(program.Execute([]int{2}))
+	program.SetInputs([]int{2})
+	fmt.Println(program.Execute())
 }

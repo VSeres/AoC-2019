@@ -67,9 +67,11 @@ func partTwo(inputPhases []int) int {
 		for num, amplifier := range amplifiers {
 			if firstRun {
 				inputs[0] = phases[num]
-				inputs[1] = amplifier.Execute(inputs)[0]
+				amplifier.SetInputs(inputs)
+				inputs[1] = amplifier.Execute()[0]
 			} else {
-				inputs[1] = amplifier.Execute(inputs[1:])[0]
+				amplifier.SetInputs(inputs[1:])
+				inputs[1] = amplifier.Execute()[0]
 			}
 		}
 		firstRun = false
@@ -87,7 +89,8 @@ func partOne(phases []int) int {
 	inputs := make([]int, 2)
 	for num, amplifier := range amplifiers {
 		inputs[0] = phases[num]
-		inputs[1] = amplifier.Execute(inputs)[0]
+		amplifier.SetInputs(inputs)
+		inputs[1] = amplifier.Execute()[0]
 	}
 	return inputs[1]
 }
