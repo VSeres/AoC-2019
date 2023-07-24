@@ -11,10 +11,4 @@ type node struct {
 	left          *node
 	leftDistance  int
 	explored      bool
-	goal          bool
-}
-
-type vertex struct {
-	nodeA node
-	nodeb node
 }
