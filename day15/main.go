@@ -79,7 +79,8 @@ func main() {
 		// 	time.Sleep(150 * time.Millisecond)
 		// }
 	}
-	fmt.Println(path(startNode, endNode, 0, point{}))
+	fmt.Println(shortestPath(startNode, endNode, 0, point{}))
+	fmt.Println(maxDepth(endNode, 0))
 }
 
 func isCrossing(p point) bool {
@@ -256,28 +257,67 @@ func getNewPos(dir int) point {
 
 var solution = make([]point, 32)
 
-func path(start *node, end *node, dist int, parrent point) int {
+func shortestPath(start *node, end *node, dist int, parrent point) int {
 	if start.point.equals(end.point) {
 		solution = append(solution, start.point)
 		return dist
 	}
 	distResult := -500
 	if start.up != nil && !start.up.equals(parrent) && distResult <= 0 {
-		distResult = path(start.up, end, dist+start.upDistance, start.point)
+		distResult = shortestPath(start.up, end, dist+start.upDistance, start.point)
 	}
 
 	if start.down != nil && !start.down.equals(parrent) && distResult <= 0 {
-		distResult = path(start.down, end, dist+start.downDistance, start.point)
+		distResult = shortestPath(start.down, end, dist+start.downDistance, start.point)
 	}
 
 	if start.left != nil && !start.left.equals(parrent) && distResult <= 0 {
-
-		distResult = path(start.left, end, dist+start.leftDistance, start.point)
+		distResult = shortestPath(start.left, end, dist+start.leftDistance, start.point)
 	}
 
 	if start.right != nil && !start.right.equals(parrent) && distResult <= 0 {
-
-		distResult = path(start.right, end, dist+start.rightDistance, start.point)
+		distResult = shortestPath(start.right, end, dist+start.rightDistance, start.point)
 	}
 	return distResult
+}
+
+var visited = make(map[point]bool, 0)
+
+func maxDepth(n *node, depth int) int {
+	if visited[n.point] {
+		return -50000
+	}
+	visited[n.point] = true
+	mDepth := 0
+	if n.up != nil {
+		depthTmp := maxDepth(n.up, depth+n.upDistance)
+		if depthTmp > mDepth {
+			mDepth = depthTmp
+		}
+	}
+
+	if n.down != nil {
+		depthTmp := maxDepth(n.down, depth+n.downDistance)
+		if depthTmp > mDepth {
+			mDepth = depthTmp
+		}
+	}
+
+	if n.left != nil {
+		depthTmp := maxDepth(n.left, depth+n.leftDistance)
+		if depthTmp > mDepth {
+			mDepth = depthTmp
+		}
+	}
+
+	if n.right != nil {
+		depthTmp := maxDepth(n.right, depth+n.rightDistance)
+		if depthTmp > mDepth {
+			mDepth = depthTmp
+		}
+	}
+	if mDepth == 0 {
+		return depth
+	}
+	return mDepth
 }
