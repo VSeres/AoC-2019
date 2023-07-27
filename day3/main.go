@@ -23,7 +23,7 @@ type info struct {
 	steps   uint
 }
 
-func solve(wires [][]string) {
+func solve(wires [][]string) (int, uint) {
 	pointMap := make(map[point]info, 900)
 	for wireNum, wire := range wires {
 		x, y := 0, 0
@@ -79,6 +79,7 @@ func solve(wires [][]string) {
 	// fmt.Println("part one: ", distance(*minDist))
 	// fmt.Println("part two: ", pointMap[*minStep].steps)
 	// print(pointMap)
+	return distance(*minDist), pointMap[*minStep].steps
 }
 
 func setVisited(visitedPoints map[point]info, p point, steps uint, wireNum int) {
