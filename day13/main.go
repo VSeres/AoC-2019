@@ -24,15 +24,15 @@ type tile struct {
 	tileType tileId
 }
 
+var max point
+
 func main() {
 	code := intcode.ParseFile("input.txt")
 	code.WriteMemory(0, 2)
 	blockTiels := 0
-	maxX := 0
-	maxY := 0
 	input := 0
 	tiles := make(map[point]tile, 64)
-	frame := 1
+	fmt.Print("\033[s")
 	var ballPos point
 	var paddlePos point
 	for !code.Stopped {
@@ -50,11 +50,11 @@ func main() {
 				tileType: tileId(output[i+2]),
 			}
 			p := point{output[i], output[i+1]}
-			if maxX < p.x {
-				maxX = p.x
+			if max.x < p.x {
+				max.x = p.x
 			}
-			if maxY < p.y {
-				maxY = p.y
+			if max.y < p.y {
+				max.y = p.y
 			}
 			if currentTile.tileType == block {
 				blockTiels++
@@ -67,30 +67,32 @@ func main() {
 			}
 			tiles[p] = currentTile
 		}
-		fmt.Print("\033[s")
-		var display strings.Builder
-		display.WriteString(fmt.Sprintf("frame %d\n", frame))
-		frame++
-		for y := 0; y <= maxY; y++ {
-			for x := 0; x <= maxX; x++ {
-				pixel := " "
-				switch tiles[point{x, y}].tileType {
-				case 1:
-					pixel = "#"
-				case 2:
-					pixel = "▓"
-				case 3:
-					pixel = "═"
-				case 4:
-					pixel = "■"
-				}
-				display.WriteString(pixel)
-			}
-			display.WriteByte(10)
-		}
-		display.WriteString(fmt.Sprintf("Score %d\n", tiles[point{-1, 0}].tileType))
-		fmt.Print(display.String(), "\033[u")
+		display(tiles)
 		time.Sleep(16 * time.Millisecond)
 	}
-	fmt.Println("\033[26B", blockTiels)
+	fmt.Println(blockTiels)
+}
+
+func display(tiles map[point]tile) {
+	var display strings.Builder
+	display.WriteString(fmt.Sprintf("Score %d\n", tiles[point{-1, 0}].tileType))
+	for y := 0; y <= max.y; y++ {
+		for x := 0; x <= max.x; x++ {
+			pixel := " "
+			switch tiles[point{x, y}].tileType {
+			case 1:
+				pixel = "#"
+			case 2:
+				pixel = "▓"
+			case 3:
+				pixel = "═"
+			case 4:
+				pixel = "■"
+			}
+			display.WriteString(pixel)
+		}
+		display.WriteByte(10)
+	}
+
+	fmt.Print("\033[u", display.String())
 }

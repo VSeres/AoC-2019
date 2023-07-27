@@ -41,7 +41,7 @@ func (p *Program) Execute() (output []int) {
 			fmt.Printf("invaild opcode: %d\n", opcode)
 		}
 	}
-	return
+	return output
 }
 
 func (p *Program) SetInput(i int) {
@@ -73,6 +73,7 @@ func (p *Program) readInsctrucion() int {
 	for i := len(modesStr) - 1; i >= 0; i-- {
 		p.modes[i] = modesStr[i]
 	}
+
 	return opcode
 }
 
@@ -82,10 +83,11 @@ func ParseFile(path string) Program {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	var builder strings.Builder
 
+	var builder strings.Builder
 	buff := make([]byte, 2048)
 	var n int
+
 	for err != io.EOF {
 		n, err = file.Read(buff)
 
@@ -99,8 +101,8 @@ func ParseFile(path string) Program {
 	str := strings.Trim(builder.String(), "\n\r")
 	strArr := strings.Split(str, ",")
 	code := make([]int, len(strArr))
+
 	for i := range code {
-		fmt.Printf("\r\033[K%d/%d", i+1, len(strArr))
 		if strings.Trim(strArr[i], " \n\r") == "" {
 			continue
 		}
@@ -111,7 +113,6 @@ func ParseFile(path string) Program {
 		}
 		code[i] = num
 	}
-	fmt.Println()
 
 	return Program{memory: code}
 }
@@ -121,6 +122,7 @@ func (p *Program) Clone() Program {
 		memory: make([]int, len(p.memory)),
 	}
 	copy(program.memory, p.memory)
+
 	return program
 }
 
@@ -128,6 +130,7 @@ func (p Program) ReadMemory(address int) int {
 	if address >= len(p.memory) {
 		return -1
 	}
+
 	return p.memory[address]
 }
 

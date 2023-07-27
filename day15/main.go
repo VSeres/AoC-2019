@@ -4,6 +4,7 @@ import (
 	"aoc-2019/intcode"
 	"fmt"
 	"strings"
+	"time"
 )
 
 var roomMap = make(map[point]tile, 0)
@@ -38,7 +39,7 @@ func main() {
 	}
 
 	nodeStack = append(nodeStack, startNode)
-	stepC := 0
+	stepCount := 0
 	distance := 0
 
 	fmt.Print("\033[s")
@@ -73,11 +74,9 @@ func main() {
 		}
 
 		lookAround()
-		stepC++
-		display(stepC)
-		// if stepC > 400 {
-		// 	time.Sleep(150 * time.Millisecond)
-		// }
+		stepCount++
+		display(stepCount)
+		time.Sleep(150 * time.Millisecond)
 	}
 	fmt.Println(shortestPath(startNode, endNode, 0, point{}))
 	fmt.Println(maxDepth(endNode, 0))
