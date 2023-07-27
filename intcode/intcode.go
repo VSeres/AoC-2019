@@ -3,7 +3,6 @@ package intcode
 import (
 	"fmt"
 	"io"
-	"log"
 	"os"
 	"strconv"
 	"strings"
@@ -39,7 +38,7 @@ func (p *Program) Execute() (output []int) {
 			p.Stopped = true
 			return
 		default:
-			log.Printf("invaild opcode: %d", opcode)
+			fmt.Printf("invaild opcode: %d\n", opcode)
 		}
 	}
 	return
@@ -80,7 +79,8 @@ func (p *Program) readInsctrucion() int {
 func ParseFile(path string) Program {
 	file, err := os.Open(path)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
+		os.Exit(1)
 	}
 	var builder strings.Builder
 
@@ -90,7 +90,8 @@ func ParseFile(path string) Program {
 		n, err = file.Read(buff)
 
 		if err != nil && err != io.EOF {
-			log.Fatal(err)
+			fmt.Println(err)
+			os.Exit(1)
 		}
 		builder.Write(buff[:n])
 	}
@@ -105,8 +106,8 @@ func ParseFile(path string) Program {
 		}
 		num, err := strconv.Atoi(strArr[i])
 		if err != nil {
-			fmt.Println()
-			log.Fatal(err)
+			fmt.Println(err)
+			os.Exit(1)
 		}
 		code[i] = num
 	}

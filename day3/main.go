@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"log"
 	"os"
 	"strconv"
 	"strings"
@@ -32,7 +31,7 @@ func solve(wires [][]string) {
 		for _, inst := range wire {
 			num, err := strconv.Atoi(inst[1:])
 			if err != nil {
-				log.Print(err)
+				fmt.Println(err)
 			}
 			switch inst[0] {
 			case 'U':
@@ -97,7 +96,8 @@ func setVisited(visitedPoints map[point]info, p point, steps uint, wireNum int) 
 func parseFile(path string) [][]string {
 	file, err := os.Open(path)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
+		os.Exit(1)
 	}
 	scanner := bufio.NewScanner(file)
 	wires := make([][]string, 0)

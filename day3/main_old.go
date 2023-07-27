@@ -1,7 +1,7 @@
 package main
 
 import (
-	"log"
+	"fmt"
 	"strconv"
 )
 
@@ -14,7 +14,7 @@ func solveOld(wires [][]string) {
 		for _, inst := range wire {
 			num, err := strconv.Atoi(inst[1:])
 			if err != nil {
-				log.Print(err)
+				fmt.Println(err)
 			}
 			if inst[0] == 'U' {
 				for i := y + 1; i <= y+num; i++ {
@@ -64,8 +64,8 @@ func solveOld(wires [][]string) {
 			minStep = &pCopy
 		}
 	}
-	// log.Print("part one: ", distance(*minDist))
-	// log.Print("part two: ", pointMap[*minStep].steps)
+	// fmt.Println("part one: ", distance(*minDist))
+	// fmt.Println("part two: ", pointMap[*minStep].steps)
 	// print(pointMap)
 }
 

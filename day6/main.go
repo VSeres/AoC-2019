@@ -21,16 +21,19 @@ func main() {
 	for _, v := range arr {
 		orbits[v[0]] = append(orbits[v[0]], v[1])
 	}
-
 	graf := buildGraf("COM", nil)
 	getOritbCount(graf, 0)
 	fmt.Println(num)
-	dist, found := partTwo(find(graf, "YOU"), 0)
+	dist, found := partTwo(findNode(graf, "YOU"), 0)
 	fmt.Println(dist-2, found)
 }
 
 func parseFile(filename string) [][2]string {
-	file, _ := os.Open(filename)
+	file, err := os.Open(filename)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 	arr := make([][2]string, 0)
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
@@ -67,7 +70,7 @@ func getOritbCount(graf *node, indirect int) {
 	getOritbCount(graf.right, indirect+1)
 }
 
-func find(graf *node, name string) *node {
+func findNode(graf *node, name string) *node {
 	if graf == nil {
 		return nil
 	}
@@ -76,12 +79,12 @@ func find(graf *node, name string) *node {
 	}
 	var result *node
 
-	result = find(graf.left, name)
+	result = findNode(graf.left, name)
 	if result != nil {
 		return result
 	}
 
-	result = find(graf.right, name)
+	result = findNode(graf.right, name)
 	if result != nil {
 		return result
 	}

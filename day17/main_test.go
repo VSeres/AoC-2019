@@ -40,5 +40,4 @@ func TestGetSteps(t *testing.T) {
 	if buff.String() != answer {
 		t.FailNow()
 	}
-	t.Log(patterSearch())
 }

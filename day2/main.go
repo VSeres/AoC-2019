@@ -2,14 +2,13 @@ package main
 
 import (
 	"aoc-2019/intcode"
-	"log"
+	"fmt"
 )
 
 func main() {
 	baseCode := intcode.ParseFile("./input.txt")
 	partOne(baseCode)
 	partTwo(baseCode)
-
 }
 
 func partOne(baseProgram intcode.Program) {
@@ -17,7 +16,7 @@ func partOne(baseProgram intcode.Program) {
 	program.WriteMemory(1, 12)
 	program.WriteMemory(2, 2)
 	program.Execute()
-	log.Print(program.ReadMemory(0))
+	fmt.Println(program.ReadMemory(0))
 }
 
 func partTwo(baseProgram intcode.Program) {
@@ -29,7 +28,7 @@ func partTwo(baseProgram intcode.Program) {
 			program.Execute()
 			result := program.ReadMemory(0)
 			if result == 19690720 {
-				log.Print(result, i, j)
+				fmt.Println(result, i, j)
 				return
 			} else if result > 19690720 {
 				break
